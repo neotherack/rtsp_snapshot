@@ -1,0 +1,15 @@
+[Unit]
+Description=RTSP Snapshot Service
+After=network.target
+
+[Service]
+Type=simple
+User=octoprint
+Group=octoprint
+ExecStart=/opt/rtsp_snapshot/.venv/bin/python /opt/rtsp_snapshot/service.py
+WorkingDirectory=/opt/rtsp_snapshot
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
