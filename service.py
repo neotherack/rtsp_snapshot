@@ -4,10 +4,10 @@ import time
 
 app = Flask(__name__)
 
-@app.route('/snapshot')
-def snapshot():
+@app.route('/snapshotHD')
+def snapshotHD():
     try:
-        rtsp_url = "rtsp://192.168.1.12:554"
+        rtsp_url = "rtsp://192.168.1.12:554/onvif/stream1"
         cap = cv2.VideoCapture(rtsp_url)
         
         if not cap.isOpened():
@@ -26,6 +26,32 @@ def snapshot():
         return Response(buffer.tobytes(), mimetype='image/jpeg')
     
     except Exception as e:
+
+        return f"Error: {str(e)}", 500
+
+@app.route('/snapshot')
+def snapshot():
+    try:
+        rtsp_url = "rtsp://192.168.1.12:554/onvif/stream2"
+        cap = cv2.VideoCapture(rtsp_url)
+
+        if not cap.isOpened():
+            return "Error: No se puede conectar a la cámara RTSP", 500
+
+        success, frame = cap.read()
+        cap.release()
+
+        if not success:
+            return "Error: No se pudo capturar imagen", 500
+
+        ret, buffer = cv2.imencode('.jpg', frame)
+        if not ret:
+            return "Error: No se pudo codificar imagen", 500
+
+        return Response(buffer.tobytes(), mimetype='image/jpeg')
+
+    except Exception as e:
+
         return f"Error: {str(e)}", 500
 
 def generate_frames():
